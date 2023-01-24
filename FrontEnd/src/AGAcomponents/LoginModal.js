@@ -1,66 +1,66 @@
-import axios from "axios";
-import { useState } from "react";
+import axios from 'axios'
+import { useState } from 'react'
 
 const LoginModal = ({
   open,
   onClose,
   setOpenLoginModal,
   setOpenSignupModal,
-  setProfile,
+  setProfile
 }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
-  const login = (e) => {
-    e.preventDefault();
+  const login = e => {
+    e.preventDefault()
     axios
-      .post("http://localhost:3636/user/login", {
+      .post('http://localhost:8000/user/login', {
         username,
-        password,
+        password
       })
       .then(({ data }) => {
-        console.log(data);
+        console.log(data)
         if (data.token) {
-          localStorage.setItem("token", data.token);
+          localStorage.setItem('token', data.token)
           // navigate("/profile");
 
-          setProfile(true);
-          setOpenLoginModal(false);
+          setProfile(true)
+          setOpenLoginModal(false)
         } else {
-          alert(data.message);
+          alert(data.message)
         }
-      });
-  };
+      })
+  }
 
-  if (!open) return null;
+  if (!open) return null
   return (
-    <div className="modalOverlay">
-      <div className="modalContainer">
-        <a className="modalBtn" onClick={onClose}>
+    <div className='modalOverlay'>
+      <div className='modalContainer'>
+        <a className='modalBtn' onClick={onClose}>
           X
         </a>
 
-        <h2 class="title"> Login </h2>
-        <form action="login-box">
-          <label htmlFor="username">username</label>
+        <h2 class='title'> Login </h2>
+        <form action='login-box'>
+          <label htmlFor='username'>username</label>
           <input
-            type="text"
-            onChange={(e) => {
-              setUsername(e.target.value);
+            type='text'
+            onChange={e => {
+              setUsername(e.target.value)
             }}
           />
-          <label htmlFor="password">password</label>
+          <label htmlFor='password'>password</label>
           <input
-            type="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
+            type='password'
+            onChange={e => {
+              setPassword(e.target.value)
             }}
           />
           <button
-            class="loginBtn"
-            type="submit"
-            onClick={(e) => {
-              login(e);
+            class='loginBtn'
+            type='submit'
+            onClick={e => {
+              login(e)
             }}
           >
             Login
@@ -68,7 +68,7 @@ const LoginModal = ({
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginModal;
+export default LoginModal
