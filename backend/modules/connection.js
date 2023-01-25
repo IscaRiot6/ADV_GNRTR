@@ -6,9 +6,7 @@ main()
 
 async function main() {
   //mongoose.set("strictQuery", false);
-  await mongoose.connect(
-    "mongodb+srv://stefanatti-13:Ananas@cluster0.sghhmsy.mongodb.net/?retryWrites=true&w=majority"
-  );
+  await mongoose.connect(process.env.MONGO_URI);
 }
 
 module.exports = mongoose;
