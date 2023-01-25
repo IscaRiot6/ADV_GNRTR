@@ -1,62 +1,62 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const SignupModal = ({
   open,
   onClose,
   setOpenLoginModal,
-  setOpenSignupModal
+  setOpenSignupModal,
 }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const signUp = e => {
-    e.preventDefault()
+  const signUp = (e) => {
+    e.preventDefault();
     axios
-      .post('http://localhost:8000/user/signup', {
+      .post("http://localhost:3636/user/signup", {
         username,
-        password
+        password,
       })
       .then(({ data }) => {
-        console.log(data)
-        if (data.message === 'User already exist ') {
-          setOpenSignupModal(false)
-          setOpenLoginModal(true)
+        console.log(data);
+        if (data.message === "User already exist ") {
+          setOpenSignupModal(false);
+          setOpenLoginModal(true);
         } else {
-          alert(data.message)
+          alert(data.message);
         }
-      })
-  }
+      });
+  };
 
-  if (!open) return null
+  if (!open) return null;
   return (
-    <div className='modalOverlay'>
-      <div className='modalContainer'>
-        <a className='modalBtn' onClick={onClose}>
+    <div className="modalOverlay">
+      <div className="modalContainer">
+        <a className="modalBtn" onClick={onClose}>
           X
         </a>
 
-        <h2 class='title'> Sign up </h2>
-        <form action='login-box'>
-          <label htmlFor='username'>username</label>
+        <h2 class="title"> Sign up </h2>
+        <form action="login-box">
+          <label htmlFor="username">username</label>
           <input
-            type='text'
-            onChange={e => {
-              setUsername(e.target.value)
+            type="text"
+            onChange={(e) => {
+              setUsername(e.target.value);
             }}
           />
-          <label htmlFor='password'>password</label>
+          <label htmlFor="password">password</label>
           <input
-            type='password'
-            onChange={e => {
-              setPassword(e.target.value)
+            type="password"
+            onChange={(e) => {
+              setPassword(e.target.value);
             }}
           />
           <button
-            class='signupBtn'
-            type='submit'
-            onClick={e => {
-              signUp(e)
+            class="signupBtn"
+            type="submit"
+            onClick={(e) => {
+              signUp(e);
             }}
           >
             signup
@@ -64,7 +64,7 @@ const SignupModal = ({
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignupModal
+export default SignupModal;

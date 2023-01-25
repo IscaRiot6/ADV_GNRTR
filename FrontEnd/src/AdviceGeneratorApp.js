@@ -1,113 +1,131 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import './AdviceGeneratorApp.scss'
-import SignupModal from './AGAcomponents/SignupModal'
-import LoginModal from './AGAcomponents/LoginModal'
-import FavoritesModal from './AGAcomponents/FavoritesModal'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "./AdviceGeneratorApp.scss";
+import SignupModal from "./AGAcomponents/SignupModal";
+import LoginModal from "./AGAcomponents/LoginModal";
+import FavoritesModal from "./AGAcomponents/FavoritesModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-function AdviceGeneratorApp () {
-  const [adviceId, setAdviceId] = useState('')
-  const [advice, setAdvice] = useState('')
-  const [openSignupModal, setOpenSignupModal] = useState(false)
-  const [openLoginModal, setOpenLoginModal] = useState(false)
-  const [openFavoritesModal, setOpenFavoritesModal] = useState(false)
-  const [profile, setProfile] = useState(false)
-  const [user, setUser] = useState('')
-  const [favorites, setFavorites] = useState('')
-  const [getAdvices, setGetAdvices] = useState('')
+function AdviceGeneratorApp() {
+  const [adviceId, setAdviceId] = useState("");
+  const [advice, setAdvice] = useState("");
+  const [openSignupModal, setOpenSignupModal] = useState(false);
+  const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [openFavoritesModal, setOpenFavoritesModal] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [user, setUser] = useState("");
+  const [favorites, setFavorites] = useState("");
+  const [getAdvices, setGetAdvices] = useState("");
 
   useEffect(() => {
-    getAdvice()
-  }, [])
+    getAdvice();
+  }, []);
 
   const getAdvice = () => {
     axios
       .get(`https://api.adviceslip.com/advice`)
       .then(({ data }) => {
-        setAdvice(data.slip.advice)
-        setAdviceId(data.slip.id)
+        setAdvice(data.slip.advice);
+        setAdviceId(data.slip.id);
       })
-      .catch(err => console.error('Error:', err))
-  }
+      .catch((err) => console.error("Error:", err));
+  };
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem("token")) {
       axios
-        .post('http://localhost:8000/user/verify', {
-          token: localStorage.getItem('token')
+        .post("http://localhost:3636/user/verify", {
+          token: localStorage.getItem("token"),
         })
         .then(({ data }) => {
-          setUser(data)
+          setUser(data);
         })
-        .catch(err => console.error('Error:', err))
+        .catch((err) => console.error("Error:", err));
     }
-  }, [user])
+  }, []);
 
   useEffect(() => {
     axios
-      .get('http://localhost:8000/advice')
+      .get("http://localhost:3636/advice")
       .then(({ data }) => {
-        setGetAdvices(data)
+        setGetAdvices(data);
       })
-      .catch(err => console.error('Error:', err))
-  }, [getAdvices])
+      .catch((err) => console.error("Error:", err));
+  }, [getAdvices]);
+
+  const likeAdvice = () => {
+    setFavorites(advice);
+    console.log(favorites);
+  };
 
   const saveAdvice = () => {
-    axios
-      .post('http://localhost:8000/advice/', {
-        advice: favorites,
-        owner: user._id
-      })
-      .catch(err => console.error('Error:', err))
-  }
+    if (favorites) {
+      const newAdvice = axios
+        .post("http://localhost:3636/advice/", {
+          advice: favorites,
+          owner: user._id,
+        })
+        .catch((err) => console.error("Error:", err));
+      setGetAdvices(getAdvices, newAdvice);
+      console.log(getAdvices);
+      setOpenFavoritesModal(true);
+    } else {
+      alert(
+        "Not any favorite advice to your collection yet. When you like an advice, we advice you to press like."
+      );
+      setOpenFavoritesModal(false);
+    }
+  };
 
-  const deleteAdvice = async id => {
-    const data = await fetch('http://localhost:8000/advice/' + id, {
-      method: 'DELETE'
+  const deleteAdvice = async (id) => {
+    const data = await fetch("http://localhost:3636/advice/" + id, {
+      method: "DELETE",
     })
-      .then(res => res.json())
-      .catch(err => console.error('Error:', err))
+      .then((res) => res.json())
+      .catch((err) => console.error("Error:", err));
 
-    setGetAdvices(getAdvices =>
-      getAdvices.filter(getAdvice => getAdvice._id !== data._id)
-    )
-  }
+    setGetAdvices((getAdvices) =>
+      getAdvices.filter((getAdvice) => getAdvice._id !== data._id)
+    );
+  };
 
   return (
-    <div className='App'>
+    <div className="App">
       {profile ? (
-        <div id='navBar'>
-          <h1 className='user-name'>{user.username}</h1>
-
-          <a
-            onClick={() => {
-              setFavorites(advice)
-            }}
-          >
-            like
-          </a>
-          <a
-            onClick={() => {
-              saveAdvice()
-
-              setOpenFavoritesModal(true)
-            }}
-          >
-            My favorite
-          </a>
+        <div className=" logedIn-Bar">
+          <h1 className="user-name">{user.username}</h1>
+          <div className="like_div">
+            <a
+              className="heart"
+              onClick={() => {
+                likeAdvice();
+              }}
+            >
+              <FontAwesomeIcon icon={faHeart} />
+            </a>
+            <a
+              className="my_favs"
+              onClick={() => {
+                saveAdvice();
+              }}
+            >
+              My favorites
+            </a>
+          </div>
         </div>
       ) : (
-        <div id='navBar'>
+        <div className="navBar">
           <a
             onClick={() => {
-              setOpenSignupModal(true)
+              setOpenSignupModal(true);
             }}
           >
             Signup
           </a>
           <a
             onClick={() => {
-              setOpenLoginModal(true)
+              setOpenLoginModal(true);
             }}
           >
             Login
@@ -120,14 +138,16 @@ function AdviceGeneratorApp () {
         setOpenLoginModal={setOpenLoginModal}
         open={openSignupModal}
         onClose={() => {
-          setOpenSignupModal(false)
+          setOpenSignupModal(false);
         }}
       />
       <LoginModal
+        user={user}
+        setOpenLoginModal={setOpenLoginModal}
         setProfile={setProfile}
         open={openLoginModal}
         onClose={() => {
-          setOpenLoginModal(false)
+          setOpenLoginModal(false);
         }}
       />
       <FavoritesModal
@@ -135,39 +155,39 @@ function AdviceGeneratorApp () {
         deleteAdvice={deleteAdvice}
         open={openFavoritesModal}
         onClose={() => {
-          setOpenFavoritesModal(false)
+          setOpenFavoritesModal(false);
         }}
       />
 
-      <div id='container'>
-        <div id='advArea'>
-          <h4 class='advId'>{adviceId}</h4>
-          <h1 class='adv'>{advice}</h1>
+      <div id="container">
+        <div id="advArea">
+          <h4 class="advId">{adviceId}</h4>
+          <h1 class="adv">{advice}</h1>
         </div>
-        <div id='theLines'>
-          <hr class='line' />
-          <hr class='dotes' />
-          <hr class='dotes' />
-          <hr class='line' />
+        <div id="theLines">
+          <hr class="line" />
+          <hr class="dotes" />
+          <hr class="dotes" />
+          <hr class="line" />
         </div>
-        <div id='button'>
+        <div id="button">
           <button
             onClick={() => {
-              getAdvice()
+              getAdvice();
             }}
-            class='btn'
+            class="btn"
           >
-            <svg width='24' height='24' xmlns='http://www.w3.org/2000/svg'>
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
               <path
-                d='M20 0H4a4.005 4.005 0 0 0-4 4v16a4.005 4.005 0 0 0 4 4h16a4.005 4.005 0 0 0 4-4V4a4.005 4.005 0 0 0-4-4ZM7.5 18a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0-9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm4.5 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm4.5 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0-9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z'
-                fill='#202733'
+                d="M20 0H4a4.005 4.005 0 0 0-4 4v16a4.005 4.005 0 0 0 4 4h16a4.005 4.005 0 0 0 4-4V4a4.005 4.005 0 0 0-4-4ZM7.5 18a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0-9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm4.5 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm4.5 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0-9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"
+                fill="#202733"
               />
             </svg>
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdviceGeneratorApp
+export default AdviceGeneratorApp;

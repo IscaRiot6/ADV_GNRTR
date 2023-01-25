@@ -1,3 +1,6 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+
 const FavoritesModal = ({ open, onClose, getAdvices, deleteAdvice }) => {
   if (!open) return null;
   return (
@@ -10,19 +13,20 @@ const FavoritesModal = ({ open, onClose, getAdvices, deleteAdvice }) => {
         <h2 class="title"> My Favorites Advices </h2>
         <div>
           {getAdvices &&
-            getAdvices.map((getAdvice, index) => {
+            getAdvices.map((getAdvice) => {
               return (
                 <div className="favAdvices" key={getAdvice._id}>
                   <ul>
                     <li className="favs">
                       {getAdvice.advice}
-                      <button
+                      {"  "}
+                      <a
                         onClick={() => {
                           deleteAdvice(getAdvice._id);
                         }}
                       >
-                        x
-                      </button>
+                        <FontAwesomeIcon className="trash" icon={faTrash} />
+                      </a>
                     </li>
                   </ul>
                 </div>

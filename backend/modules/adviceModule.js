@@ -1,12 +1,12 @@
-const mongoose = require('./connection')
+const mongoose = require("./connection");
 
 const AdviceSchema = new mongoose.Schema({
   advice: String,
   userId: String,
 
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-})
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+});
 
-const Advice = mongoose.model('Advice', AdviceSchema)
+const Advice = mongoose.model("Advice", AdviceSchema);
 
-module.exports = Advice
+module.exports = Advice;
